@@ -29,7 +29,7 @@ jobs:
 
       - name: Install Pods
         run: pod install --repo-update
-        working-directory: ./podfile
+        working-directory: ./Yattee
 
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
