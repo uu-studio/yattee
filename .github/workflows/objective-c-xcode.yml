@@ -27,18 +27,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yattee-pods-
 
-      - name: Find Podfile location
-        run: |
-          echo "=== Current directory ==="
-          pwd
-          echo "=== Finding Podfile ==="
-          find /Users/runner/work/yattee/yattee -name "Podfile" -type f 2>/dev/null
-          echo "=== Root directory contents ==="
-          ls -la /Users/runner/work/yattee/yattee/
 
       - name: Install Pods
         run: pod install --repo-update
-        working-directory: ./Yattee
+        working-directory: /Users/runner/work/yattee/yattee
 
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
