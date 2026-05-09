@@ -23,16 +23,14 @@ workflows:
             -destination 'generic/platform=iOS' \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             clean archive \
-            DEVELOPMENT_TEAM=$TEAM_ID \
-            | xcpretty
+            DEVELOPMENT_TEAM=$TEAM_ID
       - name: Export IPA
         script: |
           xcodebuild \
             -exportArchive \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             -exportOptionsPlist .codemagic/export_options_ios.plist \
-            -exportPath $CM_BUILD_DIR/build/ios \
-            | xcpretty
+            -exportPath $CM_BUILD_DIR/build/ios
     artifacts:
       - build/ios/*.ipa
       - build/**/*.xcarchive
@@ -67,16 +65,14 @@ workflows:
             -destination 'generic/platform=macOS' \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             clean archive \
-            DEVELOPMENT_TEAM=$TEAM_ID \
-            | xcpretty
+            DEVELOPMENT_TEAM=$TEAM_ID
       - name: Export App Bundle
         script: |
           xcodebuild \
             -exportArchive \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             -exportOptionsPlist .codemagic/export_options_macos.plist \
-            -exportPath $CM_BUILD_DIR/build/macos \
-            | xcpretty
+            -exportPath $CM_BUILD_DIR/build/macos
     artifacts:
       - build/macos/*.app
       - build/**/*.xcarchive
@@ -110,16 +106,14 @@ workflows:
             -destination 'generic/platform=tvOS' \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             clean archive \
-            DEVELOPMENT_TEAM=$TEAM_ID \
-            | xcpretty
+            DEVELOPMENT_TEAM=$TEAM_ID
       - name: Export IPA
         script: |
           xcodebuild \
             -exportArchive \
             -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
             -exportOptionsPlist .codemagic/export_options_tvos.plist \
-            -exportPath $CM_BUILD_DIR/build/tvos \
-            | xcpretty
+            -exportPath $CM_BUILD_DIR/build/tvos
     artifacts:
       - build/tvos/*.ipa
       - build/**/*.xcarchive
@@ -131,6 +125,30 @@ workflows:
         submit_to_testflight: true
         beta_groups: []
 
+  ios-check:
+    name: Yattee iOS (Compile Check)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        XCODE_PROJECT: Yattee.xcodeproj
+        XCODE_SCHEME: Yattee (iOS)
+        TEAM_ID: 78Z5H3M6RJ
+      xcode: 16.1
+    scripts:
+      - name: Build for iOS Simulator (no signing)
+        script: |
+          xcodebuild \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            clean build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO
+
   ios-fastlane:
     name: Yattee iOS (Fastlane)
     max_build_duration: 120
@@ -138,12 +156,16 @@ workflows:
     environment:
       groups:
         - app_store_credentials
+        - match
         - signing
       vars:
         APP_NAME: Yattee
         FASTLANE_WORK_DIR: fastlane
       xcode: 16.1
     scripts:
+      - name: Create DEVELOPMENT_TEAM.xcconfig
+        script: |
+          echo "DEVELOPMENT_TEAM = $TEAM_ID" > Xcode-config/DEVELOPMENT_TEAM.xcconfig
       - name: Run iOS beta lane
         script: |
           cd $FASTLANE_WORK_DIR
@@ -151,7 +173,3 @@ workflows:
     artifacts:
       - fastlane/builds/**/*.ipa
       - fastlane/builds/**/*.app
-    publishing:
-      email:
-        recipients:
-          - developers@example.com
