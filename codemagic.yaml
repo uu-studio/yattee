@@ -4,9 +4,6 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      ios_signing:
-        distribution_type: "app_store"
-        bundle_identifier: "stream.yattee.app"
       vars:
         APP_NAME: Yattee
         APP_STORE_APP_ID: 6444351349
@@ -95,9 +92,6 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      ios_signing:
-        distribution_type: "app_store"
-        bundle_identifier: "stream.yattee.app"
       vars:
         APP_NAME: Yattee
         XCODE_PROJECT: Yattee.xcodeproj
