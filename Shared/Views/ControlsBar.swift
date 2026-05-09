@@ -356,7 +356,7 @@ extension View {
     func applyControlsBackground(enabled: Bool, cornerRadius: Double) -> some View {
         if enabled {
             #if os(iOS)
-                if #available(iOS 26.0, *) {
+                if #available(iOS 18.0, *) {
                     // Use Liquid Glass on iOS 26+
                     self.glassEffect(
                         .regular.interactive(),
