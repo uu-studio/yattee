@@ -5,8 +5,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       ios_signing:
-        distribution: app-store
-        bundle_identifier: stream.yattee.app
+        distribution_type: "app-store"
+        bundle_identifier: "stream.yattee.app"
       vars:
         APP_NAME: Yattee
         APP_STORE_APP_ID: 6444351349
@@ -96,8 +96,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       ios_signing:
-        distribution: app-store
-        bundle_identifier: stream.yattee.app
+        distribution_type: "app-store"
+        bundle_identifier: "stream.yattee.app"
       vars:
         APP_NAME: Yattee
         XCODE_PROJECT: Yattee.xcodeproj
