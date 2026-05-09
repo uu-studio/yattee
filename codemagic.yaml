@@ -1,0 +1,161 @@
+workflows:
+  ios:
+    name: Yattee iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      ios_signing:
+        provisioning_profiles_dir: ~/Library/MobileDevice/Provisioning\ Profiles
+      vars:
+        APP_NAME: Yattee
+        APP_STORE_APP_ID: 6444351349
+        XCODE_PROJECT: Yattee.xcodeproj
+        XCODE_SCHEME: Yattee (iOS)
+        BUNDLE_ID: stream.yattee.app
+        TEAM_ID: 78Z5H3M6RJ
+      xcode: 16.1
+    scripts:
+      - name: Build for iOS
+        script: |
+          xcodebuild \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            clean archive \
+            DEVELOPMENT_TEAM=$TEAM_ID \
+            | xcpretty
+      - name: Export IPA
+        script: |
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            -exportOptionsPlist .codemagic/export_options_ios.plist \
+            -exportPath $CM_BUILD_DIR/build/ios \
+            | xcpretty
+    artifacts:
+      - build/ios/*.ipa
+      - build/**/*.xcarchive
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        beta_groups: []
+
+  macos:
+    name: Yattee macOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        APP_NAME: Yattee
+        APP_STORE_APP_ID: 1599622520
+        XCODE_PROJECT: Yattee.xcodeproj
+        XCODE_SCHEME: Yattee (macOS)
+        BUNDLE_ID: stream.yattee.app
+        TEAM_ID: 78Z5H3M6RJ
+      xcode: 16.1
+    scripts:
+      - name: Build for macOS
+        script: |
+          xcodebuild \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            clean archive \
+            DEVELOPMENT_TEAM=$TEAM_ID \
+            | xcpretty
+      - name: Export App Bundle
+        script: |
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            -exportOptionsPlist .codemagic/export_options_macos.plist \
+            -exportPath $CM_BUILD_DIR/build/macos \
+            | xcpretty
+    artifacts:
+      - build/macos/*.app
+      - build/**/*.xcarchive
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+
+  tvos:
+    name: Yattee tvOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      ios_signing:
+        provisioning_profiles_dir: ~/Library/MobileDevice/Provisioning\ Profiles
+      vars:
+        APP_NAME: Yattee
+        XCODE_PROJECT: Yattee.xcodeproj
+        XCODE_SCHEME: Yattee (tvOS)
+        BUNDLE_ID: stream.yattee.app
+        TEAM_ID: 78Z5H3M6RJ
+      xcode: 16.1
+    scripts:
+      - name: Build for tvOS
+        script: |
+          xcodebuild \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk appletvos \
+            -destination 'generic/platform=tvOS' \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            clean archive \
+            DEVELOPMENT_TEAM=$TEAM_ID \
+            | xcpretty
+      - name: Export IPA
+        script: |
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/build/Yattee.xcarchive \
+            -exportOptionsPlist .codemagic/export_options_tvos.plist \
+            -exportPath $CM_BUILD_DIR/build/tvos \
+            | xcpretty
+    artifacts:
+      - build/tvos/*.ipa
+      - build/**/*.xcarchive
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        beta_groups: []
+
+  ios-fastlane:
+    name: Yattee iOS (Fastlane)
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - app_store_credentials
+        - signing
+      vars:
+        APP_NAME: Yattee
+        FASTLANE_WORK_DIR: fastlane
+      xcode: 16.1
+    scripts:
+      - name: Run iOS beta lane
+        script: |
+          cd $FASTLANE_WORK_DIR
+          fastlane ios beta
+    artifacts:
+      - fastlane/builds/**/*.ipa
+      - fastlane/builds/**/*.app
+    publishing:
+      email:
+        recipients:
+          - developers@example.com
