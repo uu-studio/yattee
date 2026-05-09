@@ -13,6 +13,9 @@ workflows:
         TEAM_ID: 78Z5H3M6RJ
       xcode: 16.1
     scripts:
+      - name: Clean SPM cache
+        script: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
       - name: Build for iOS
         script: |
           xcodebuild \
@@ -56,6 +59,9 @@ workflows:
         TEAM_ID: 78Z5H3M6RJ
       xcode: 16.1
     scripts:
+      - name: Clean SPM cache
+        script: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
       - name: Build for macOS
         script: |
           xcodebuild \
@@ -96,6 +102,9 @@ workflows:
         TEAM_ID: 78Z5H3M6RJ
       xcode: 16.1
     scripts:
+      - name: Clean SPM cache
+        script: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
       - name: Build for tvOS
         script: |
           xcodebuild \
@@ -136,6 +145,9 @@ workflows:
         TEAM_ID: 78Z5H3M6RJ
       xcode: 16.1
     scripts:
+      - name: Clean SPM cache
+        script: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
       - name: Build for iOS Simulator (no signing)
         script: |
           # Override swiftlint to prevent lint violations from failing the build
