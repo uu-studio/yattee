@@ -164,6 +164,8 @@ workflows:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             ONLY_ACTIVE_ARCH=NO
+    artifacts:
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/**/*.app
 
   ios-fastlane:
     name: Yattee iOS (Fastlane)
