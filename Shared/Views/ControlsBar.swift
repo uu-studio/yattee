@@ -356,35 +356,27 @@ extension View {
     func applyControlsBackground(enabled: Bool, cornerRadius: Double) -> some View {
         if enabled {
             #if os(iOS)
-                if #available(iOS 18.0, *) {
-                    // Use Liquid Glass on iOS 26+
-                    self.glassEffect(
-                        .regular.interactive(),
-                        in: .rect(cornerRadius: cornerRadius)
-                    )
-                } else {
-                    // Fallback to ultraThinMaterial
-                    // swiftlint:disable:next deployment_target
-                    if #available(iOS 15.0, *) {
-                        self
-                            .background(
-                                RoundedRectangle(cornerRadius: cornerRadius)
-                                    .fill(.ultraThinMaterial)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: cornerRadius)
-                                    .stroke(Color("ControlsBorderColor"), lineWidth: 0.5)
-                            )
-                    } else {
-                        background(
+                // Fallback to ultraThinMaterial
+                // swiftlint:disable:next deployment_target
+                if #available(iOS 15.0, *) {
+                    self
+                        .background(
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .fill(Color.gray.opacity(0.3))
+                                .fill(.ultraThinMaterial)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: cornerRadius)
                                 .stroke(Color("ControlsBorderColor"), lineWidth: 0.5)
                         )
-                    }
+                } else {
+                    background(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(Color.gray.opacity(0.3))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(Color("ControlsBorderColor"), lineWidth: 0.5)
+                    )
                 }
             #else
                 // Fallback to ultraThinMaterial for macOS and tvOS
